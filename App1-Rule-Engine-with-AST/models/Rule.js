@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const ruleSchema = new Schema({
+const ruleSchema = new mongoose.Schema({
   ruleName: { type: String, required: true, unique: true },
   ruleAST: { type: Object, required: true }
 });

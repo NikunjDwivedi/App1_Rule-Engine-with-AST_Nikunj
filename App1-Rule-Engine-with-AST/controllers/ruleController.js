@@ -1,5 +1,5 @@
 const Rule = require('../models/Rule');
-const { parseRuleString, combineNodes, evaluate,printTree } = require('../utils/ast');
+const { parseRuleString, combineNodes, evaluate, printTree } = require('../utils/ast');
 // let count=0;
 
 function generateRandomLetterString(length) {
@@ -29,7 +29,17 @@ exports.createRule = async (req, res) => {
     printTree(rootNode);
     res.status(201).json(rule);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Error caught:", error);
+
+    // Handle MongoDB duplicate key error (E11000)
+    if (error.code === 11000) {
+      return res.status(409).json({
+        error: `A rule with the name "${req.body.ruleName}" already exists.`, // Respond with 409 Conflict
+      });
+    }
+
+    // General error handling
+    res.status(500).json({ error: 'An unknown error occurred.' });
   }
 };
 
@@ -57,7 +67,7 @@ exports.combineRules = async (req, res) => {
 exports.evaluateRule = async (req, res) => {
   try {
     const { ast, data } = req.body;
-    const rule = await Rule.find({ruleName: ast});
+    const rule = await Rule.findOne({ruleName: ast});
      // Log the fetched rule
     //  printTree(rule[0].ruleAST);
     //  console.log('Fetched rule:',rule,ast); // Debug line
@@ -65,7 +75,7 @@ exports.evaluateRule = async (req, res) => {
     if (!rule) {
       return res.status(404).json({ error: 'Rule not found' });
     }
-    const result = evaluate(rule[0].ruleAST, data);
+    const result = evaluate(rule.ruleAST, data);
     res.status(200).json({ result });
   } catch (error) {
     res.status(500).json({ error: error.message });

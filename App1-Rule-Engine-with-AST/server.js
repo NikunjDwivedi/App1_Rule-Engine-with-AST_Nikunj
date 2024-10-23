@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const path = require("path");
-const { createRuleAST } = require("./ruleEngine");
+// const { createRuleAST } = require("./ruleEngine");
 const ruleRoutes = require("./routes/ruleRoutes");
 
 const app = express();
@@ -41,35 +41,35 @@ app.get("/", (req, res) => {
 // Use ruleRoutes for "/api/rules"
 app.use("/api/rules", ruleRoutes);
 
-// Route to create a rule (should be handled in ruleRoutes)
-app.post("/api/rules/create_rule", (req, res) => {
-  const { ruleString, ruleName } = req.body;
+// // Route to create a rule (should be handled in ruleRoutes)
+// app.post("/api/rules/create_rule", (req, res) => {
+//   const { ruleString, ruleName } = req.body;
 
-  // Validate the input
-  if (!ruleString || !ruleName) {
-    return res
-      .status(400)
-      .json({ message: "ruleString and ruleName are required" });
-  }
+//   // Validate the input
+//   if (!ruleString || !ruleName) {
+//     return res
+//       .status(400)
+//       .json({ message: "ruleString and ruleName are required" });
+//   }
 
-  try {
-    // Create AST from rule string
-    const ruleAST = createRuleAST(ruleString);
+//   try {
+//     // Create AST from rule string
+//     const ruleAST = createRuleAST(ruleString);
 
-    // Simulate saving the rule to the database (use actual MongoDB later)
-    const rule = {
-      rule_name: ruleName,
-      rule_ast: ruleAST,
-    };
+//     // Simulate saving the rule to the database (use actual MongoDB later)
+//     const rule = {
+//       rule_name: ruleName,
+//       rule_ast: ruleAST,
+//     };
 
-    // Respond with the rule object (later you will save this to MongoDB)
-    res.status(200).json(rule);
-  } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Error creating rule", error: error.message });
-  }
-});
+//     // Respond with the rule object (later you will save this to MongoDB)
+//     res.status(200).json(rule);
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ message: "Error creating rule", error: error.message });
+//   }
+// });
 
 // Start the server
 app.listen(PORT, () => {
