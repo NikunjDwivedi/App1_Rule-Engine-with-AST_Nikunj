@@ -7,7 +7,7 @@ const path = require("path");
 const ruleRoutes = require("./routes/ruleRoutes");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+// const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
@@ -72,9 +72,13 @@ app.use("/api/rules", ruleRoutes);
 // });
 
 // Start the server
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+const PORT = process.env.PORT || 10000; // Use environment variable or default to 10000
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on port ${PORT}`);
 });
+
+server.keepAliveTimeout = 120000; // Set keep-alive timeout to 120 seconds
+server.headersTimeout = 120000; // Set headers timeout to 120 seconds
 
 // const express = require("express");
 // const mongoose = require("mongoose");
