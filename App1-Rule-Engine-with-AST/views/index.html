@@ -225,39 +225,47 @@
       }
 
       // Handle Create Rule form submission
-      document
-      .getElementById("create-rule-form")
-      .addEventListener("submit", async function (event) {
-        event.preventDefault();
-        const ruleName = document.getElementById("ruleName").value;
-        const ruleString = document.getElementById("ruleString").value;
-      
-        try {
-          const response = await fetch("/api/rules/create_rule", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ ruleName, ruleString }),
-          });
-      
-         
-      const result = await response.json();
+document
+.getElementById("create-rule-form")
+.addEventListener("submit", async function (event) {
+  event.preventDefault();
+  const ruleName = document.getElementById("ruleName").value;
+  const ruleString = document.getElementById("ruleString").value;
 
-      if (response.ok) {
-        // Display the success message
-        document.getElementById("create-rule-result").textContent =
-          "Rule created successfully!";
+  try {
+    const response = await fetch("/api/rules/create_rule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ruleName, ruleString }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      // Generate the AST tree and display it along with the rule details
+      let responseDetails = `Rule created successfully!<br><p>Rule Name: ${result.ruleName}</p>`;
+      responseDetails += `<p>Rule String: ${result.ruleString}</p>`;
+
+      if (result.ruleAST) {
+        const astTree = generateTreeHTML(result.ruleAST);
+        responseDetails += `<h3>AST Tree:</h3><pre>${astTree}</pre>`;
       } else {
-        // Handle the error and display the server's error message
-        document.getElementById("create-rule-result").textContent =
-          result.error || "Error: Failed to create rule";
+        responseDetails += `<p>No AST available for this rule.</p>`;
       }
-    } catch (error) {
+
+      document.getElementById("create-rule-result").innerHTML = responseDetails;
+    } else {
+      // Handle the error and display the server's error message
       document.getElementById("create-rule-result").textContent =
-        `Error: ${error.message}`;
+        result.error || "Error: Failed to create rule";
     }
-  });
+  } catch (error) {
+    document.getElementById("create-rule-result").textContent =
+      `Error: ${error.message}`;
+  }
+});
       
 
 
