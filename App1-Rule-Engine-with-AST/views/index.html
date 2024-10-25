@@ -334,57 +334,49 @@ document
         });
 
       // Handle Evaluate Rule form submission
-      document
-        .getElementById("evaluate-rule-form")
-        .addEventListener("submit", async function (event) {
-          event.preventDefault(); // Prevent the default form submission behavior
+document
+.getElementById("evaluate-rule-form")
+.addEventListener("submit", async function (event) {
+  event.preventDefault();
 
-          const ast = document.getElementById("evaluate-ast").value;
-          const data = document.getElementById("evaluate-data").value;
+  const ast = document.getElementById("evaluate-ast").value;
+  const data = document.getElementById("evaluate-data").value;
 
-          let parsedData;
-          try {
-            parsedData = JSON.parse(data); // Attempt to parse the JSON data
-          } catch (parseError) {
-            document.getElementById("evaluate-rule-result").textContent = "Please provide valid input data."; 
-            return; // Exit early if JSON is invalid
-          }
+  let parsedData;
+  try {
+    parsedData = JSON.parse(data);
+  } catch (parseError) {
+    document.getElementById("evaluate-rule-result").textContent = "Please provide valid input data.";
+    return;
+  }
 
-          try {
-            const response = await fetch("/api/rules/evaluate_rule", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ ast, data: JSON.parse(data) }), // Ensure data is valid JSON
-            });
+  try {
+    const response = await fetch("/api/rules/evaluate_rule", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ast, data: parsedData }), // Use parsedData
+    });
 
-            const result = await response.json();
+    const result = await response.json();
 
-            if (response.ok) {
-              // Check if the result field exists and display the appropriate message
-              if (typeof result.result === "boolean") {
-                document.getElementById(
-                  "evaluate-rule-result"
-                ).textContent = `Evaluation result: ${result.result}`;
-              } else {
-                // If no result field, fallback to default message
-                document.getElementById("evaluate-rule-result").textContent =
-                  result.message || "Evaluation successful!";
-              }
-            } else {
-              document.getElementById(
-                "evaluate-rule-result"
-              ).textContent = `Error: ${
-                result.message || "Failed to evaluate rule"
-              }`;
-            }
-          } catch (error) {
-            document.getElementById(
-              "evaluate-rule-result"
-            ).textContent =  "An unexpected error occurred. Please try again.";
-          }
-        });
+    if (response.ok) {
+      if (typeof result.result === "boolean") {
+        document.getElementById("evaluate-rule-result").textContent = `Evaluation result: ${result.result}`;
+      } else {
+        document.getElementById("evaluate-rule-result").textContent =
+          result.message || "Evaluation successful!";
+      }
+    } else {
+      document.getElementById("evaluate-rule-result").textContent =
+        `Error: ${result.message || "Failed to evaluate rule"}`;
+    }
+  } catch (error) {
+    document.getElementById("evaluate-rule-result").textContent =
+      "An unexpected error occurred. Please try again.";
+  }
+});
     </script>
   </body>
 </html>
