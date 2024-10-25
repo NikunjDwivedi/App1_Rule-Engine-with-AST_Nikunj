@@ -246,7 +246,7 @@ document
     if (response.ok) {
       // Generate the AST tree and display it along with the rule details
       let responseDetails = `Rule created successfully!<br><p>Rule Name: ${result.ruleName}</p>`;
-      responseDetails += `<p>Rule String: ${result.ruleString}</p>`;
+      
 
       if (result.ruleAST) {
         const astTree = generateTreeHTML(result.ruleAST);
